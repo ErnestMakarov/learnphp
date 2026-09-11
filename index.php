@@ -7,7 +7,7 @@
     Hello();
     Hello();
 
-    function square(5a) {
+    function square($a) {
         if ($a<0){
             retunr 0;
         }
@@ -19,26 +19,12 @@
     var_dump($answer);
     var_dump(square(5));
 
-?>
-<?php
-    function hello() {
-        var_dump("Hello!");
+    for ($i=0; $i<10; $i++) {
+        var_dump($i);
     }
- 
-    hello();
-    hello();
- 
-    function square(5a) {
-        if ($a<0){
-            retunr 0;
-        }
-        return $a * $a;
-        var_dump('asdasdads')
-    }
- 
-    $answer = square(4);
-    var_dump($answer);
-    var_dump(square(5));
- 
+
+    
+
 ?>
+
 
