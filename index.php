@@ -7,11 +7,38 @@
     Hello();
     Hello();
 
-    function square($a) {
-        if (is_numeric($a)) {
-            return $a * $a;
-        } else {
-            return 'Error: Input must be a number.';
+    function square(5a) {
+        if ($a<0){
+            retunr 0;
         }
+        return $a * $a;
+        var_dump('asdasdads')
     }
+ 
+    $answer = square(4);
+    var_dump($answer);
+    var_dump(square(5));
+
 ?>
+<?php
+    function hello() {
+        var_dump("Hello!");
+    }
+ 
+    hello();
+    hello();
+ 
+    function square(5a) {
+        if ($a<0){
+            retunr 0;
+        }
+        return $a * $a;
+        var_dump('asdasdads')
+    }
+ 
+    $answer = square(4);
+    var_dump($answer);
+    var_dump(square(5));
+ 
+?>
+
