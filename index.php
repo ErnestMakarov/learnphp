@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 <?php
     function Hello() {
         var_dump('Hello!');
-=======
-
-<?php
-    function Hello() {
-        var_dump('Hello!')
->>>>>>> e066de84ea5e04062fa242b52eb251a34e89e5d3
     }
 
     Hello();
@@ -15,17 +8,10 @@
 
     function square($a) {
         if ($a<0){
-<<<<<<< HEAD
             echo 'Error: Negative number';
         }
         return $a * $a;
         var_dump('asdasdads');
-=======
-            retunr 0;
-        }
-        return $a * $a;
-        var_dump('asdasdads')
->>>>>>> e066de84ea5e04062fa242b52eb251a34e89e5d3
     }
  
     $answer = square(4);
@@ -35,13 +21,18 @@
     for ($i=0; $i<10; $i++) {
         var_dump($i);
     }
-<<<<<<< HEAD
+
+    class Box {
+        public $width;
+        public $height;
+
+        function __construct($width, $height) {
+            $this->width = $width;
+            $this->height = $height;
+        }
+
+        function area() {
+            return $this->width * $this->height;
+        }
+    }
 ?>
-=======
-
-    
-
-?>
-
-
->>>>>>> e066de84ea5e04062fa242b52eb251a34e89e5d3
