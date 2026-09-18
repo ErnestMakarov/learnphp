@@ -23,16 +23,13 @@
     }
 
     class Box {
-        public $width;
-        public $height;
 
-        function __construct($width, $height) {
-            $this->width = $width;
-            $this->height = $height;
+        public function __construct( public int $width, private int $height, protected int $length) {
+            var_dump('Box created');
         }
 
-        function area() {
-            return $this->width * $this->height;
+        public function volume() {
+            return $this->width * $this->height * $this->length;
         }
     }
 ?>
