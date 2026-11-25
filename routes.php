@@ -3,6 +3,7 @@
 use App\Controllers\ArticlesController;
 use App\Controllers\AuthController;
 use App\Controllers\PublicController;
+use App\Controllers\UsersController;
 use App\Router;
 
 Router::get('/', [PublicController::class, 'index']);
@@ -20,3 +21,6 @@ Router::post('/admin/articles', [ArticlesController::class, 'store']);
 Router::get('/admin/articles/edit', [ArticlesController::class, 'edit']);
 Router::post('/admin/articles/edit', [ArticlesController::class, 'update']);
 Router::post('/admin/articles/delete', [ArticlesController::class, 'delete']);
+
+Router::get('/admin/users', [UsersController::class, 'index']);
+Router::get('/admin/users/view', [UsersController::class, 'view']);

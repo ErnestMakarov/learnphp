@@ -21,6 +21,7 @@
         <?php endforeach; ?>
         <?php if ($currentUser?->is_admin): ?>
             <a class="nav-link px-0" href="/admin/articles">Manage articles</a>
+            <a class="nav-link px-0" href="/admin/users">Manage users</a>
         <?php endif; ?>
     </nav>
 </header>
