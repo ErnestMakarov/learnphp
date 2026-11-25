@@ -4,5 +4,6 @@
         <a href="#top" class="text-secondary">Back to top</a>
     </div>
 </footer>
+<script src="/assets/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

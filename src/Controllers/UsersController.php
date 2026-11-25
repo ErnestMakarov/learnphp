@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\User;
 use PDOException;
+use App\Validation\UserInput;
 
 class UsersController
 {
@@ -66,30 +67,7 @@ class UsersController
         $confirmation = input('password_confirm');
         $errors = [];
 
-        $nameLength = preg_match_all('/./us', $user->name);
-        if (!$nameLength || $nameLength > 100) {
-            $errors[] = 'Enter a name of 1–100 characters.';
-        }
-        if (!filter_var($user->email, FILTER_VALIDATE_EMAIL) || strlen($user->email) > 255) {
-            $errors[] = 'Enter a valid email address.';
-        }
-        $existing = User::where('email', $user->email)[0] ?? null;
-        if ($existing && $existing->id !== $user->id) {
-            $errors[] = 'This email address is already in use.';
-        }
-
-        if ($user->id === null || $password !== '' || $confirmation !== '') {
-            if (preg_match_all('/./us', $password) < 8) {
-                $errors[] = 'Use a password with at least 8 characters.';
-            }
-            // Bcrypt accepts at most 72 bytes. Reject longer input instead of truncating it.
-            if (strlen($password) > 72 || str_contains($password, "\0")) {
-                $errors[] = 'The password is too long or contains an unsupported character.';
-            }
-            if ($password !== $confirmation) {
-                $errors[] = 'The passwords do not match.';
-            }
-        }
+        $errors = UserInput::validate($user, $password, $confirmation);
 
         if ($errors === []) {
             if ($password !== '') {
