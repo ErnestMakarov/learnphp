@@ -13,10 +13,12 @@ if (PHP_SAPI !== 'cli') {
 $email = strtolower(trim(getenv('ADMIN_EMAIL') ?: 'admin@example.test'));
 $password = getenv('ADMIN_PASSWORD') ?: bin2hex(random_bytes(12));
 if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 255) {
-    exit("ADMIN_EMAIL must be a valid email address.\n");
+    fwrite(STDERR, "ADMIN_EMAIL must be a valid email address.\n");
+    exit(1);
 }
 if (strlen($password) < 8 || strlen($password) > 72 || str_contains($password, "\0")) {
-    exit("ADMIN_PASSWORD must contain 8–72 bytes and no null characters.\n");
+    fwrite(STDERR, "ADMIN_PASSWORD must contain 8–72 bytes and no null characters.\n");
+    exit(1);
 }
 
 $db = DB::connection();
@@ -26,7 +28,8 @@ $db->exec(file_get_contents(dirname(__DIR__) . $schema));
 
 if (User::where('is_admin', 1) === []) {
     if (User::where('email', $email) !== []) {
-        exit("That email already belongs to a user. Choose another ADMIN_EMAIL.\n");
+        fwrite(STDERR, "That email already belongs to a user. Choose another ADMIN_EMAIL.\n");
+        exit(1);
     }
     $admin = new User();
     $admin->name = 'Administrator';

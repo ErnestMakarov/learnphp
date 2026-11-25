@@ -51,11 +51,8 @@ class ArticlesController
         $article->title = trim(input('title'));
         $article->body = trim(input('body'));
         $errors = [];
-        if ($article->title === '' || strlen($article->title) > 255) {
-            $errors[] = 'Enter a title of 1–255 bytes.';
-        }
-        if ($article->body === '') {
-            $errors[] = 'Enter the article content.';
+        if (!preg_match_all('/./us', $article->title) || preg_match_all('/./us', $article->title) > 255) {
+            $errors[] = 'Enter a title of 1–255 characters.';
         }
         if ($errors !== []) {
             http_response_code(422);

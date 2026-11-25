@@ -11,7 +11,7 @@
         </div>
         <div class="mb-4">
             <label class="form-label" for="body">Content</label>
-            <textarea class="form-control" name="body" id="body" rows="8" required><?= e($article->body) ?></textarea>
+            <textarea class="form-control" name="body" id="body" rows="8"><?= e($article->body) ?></textarea>
         </div>
         <button class="btn btn-dark">Save article</button><a class="btn btn-link" href="/admin/articles">Cancel</a>
     </form>

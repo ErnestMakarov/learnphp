@@ -10,25 +10,31 @@ class PublicController
     {
         $posts = Article::all();
         $title = 'World';
-        include __DIR__ . '/../../views/index.php';
+        view('index', compact('title', 'posts'));
     }
 
     public function us(): void
     {
         $title = 'U.S.';
-        $posts = [
-            (object) [
-                'title' => 'A student guide to community projects',
-                'body' => 'A classroom example about volunteering, local libraries and sharing skills with neighbours.',
-                'created_at' => '2026-10-01',
-            ],
-            (object) [
-                'title' => 'Learning beyond the classroom',
-                'body' => 'Practical projects help students connect what they study with the places where they live.',
-                'created_at' => '2026-10-02',
-            ],
-        ];
-        include __DIR__ . '/../../views/us.php';
+        $posts = Article::all();
+        view('us', compact('title', 'posts'));
+    }
+
+    public function forms(): void
+    {
+        $name = $_SERVER['REQUEST_METHOD'] === 'POST' ? trim(input('name')) : '';
+        $age = $_SERVER['REQUEST_METHOD'] === 'POST' ? input('age') : '';
+        $message = '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $validAge = filter_var($age, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 130]]);
+            if ($name === '' || $validAge === false) {
+                http_response_code(422);
+                $message = 'Enter your name and an age between 0 and 130.';
+            } else {
+                $message = "Hello, $name! You are $validAge years old.";
+            }
+        }
+        view('forms', ['title' => 'Forms', 'name' => $name, 'age' => $age, 'message' => $message]);
     }
 
     public function tech(): void
@@ -46,6 +52,6 @@ class PublicController
                 'created_at' => '2026-10-02',
             ],
         ];
-        include __DIR__ . '/../../views/tech.php';
+        view('tech', compact('title', 'posts'));
     }
 }
