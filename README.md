@@ -4,7 +4,7 @@ A classroom PHP journal. The project follows the controller/model/view approach 
 [Kaspar Martin Suursalu's course example](https://github.com/Kasparsu/ta24blearnphp)
 (reference commit `43ffc842591bc93212971c5103b7d33ab86c2a5f`).
 The router, database access, forms and controllers are adapted for this repository.
-Bootstrap CSS is distributed with its original MIT notice. No classmate's repository is used.
+Bootstrap CSS is distributed with its original MIT notice.
 
 ## Run locally
 
@@ -51,3 +51,45 @@ Environment variables are read from the shell; `.env` files are not loaded autom
 
 Admin pages require an administrator session. Every POST form uses a CSRF token.
 Passwords are stored using `password_hash` and checked using `password_verify`.
+
+## Completed assignments
+
+| Requirement | Implementation |
+| --- | --- |
+| Technology page and original posts | `PublicController::tech()`, `views/tech.php`, `/tech` |
+| Shared page layout | Header, posts, sidebar and footer partials |
+| Technology menu link | `views/partials/nav.php` |
+| User list and detail view | `/admin/users`, `/admin/users/view?id=...` |
+| Create a user | GET `/admin/users/create`, POST `/admin/users` |
+| Edit a user | GET and POST `/admin/users/edit` |
+| Delete a user | POST `/admin/users/delete` with confirmation and CSRF protection |
+| Admin menu | Manage articles and Manage users links |
+| Separate commits | Foundation, Tech, user list/details, creation, editing, deletion, verification |
+
+The assignment's article URLs are `/admin/articles`; the teacher's current example uses
+`/admin/posts`. This project uses the assignment's naming and keeps a working article CRUD.
+New accounts created through the users form are ordinary users. Only the administrator
+created by setup can manage records. The form does not grant administrator rights.
+An administrator cannot delete their own account. An empty password on edit keeps the old
+hash; a new password must match its confirmation. Passwords and hashes are never rendered.
+Bcrypt passwords are limited to 72 bytes to avoid silent truncation.
+
+## Verification
+
+Run the HTTP integration checks with PHP and Python 3 installed:
+
+```sh
+python3 tests/smoke.py
+```
+
+Optionally set `PHP_BIN` to a different PHP executable. Tests create a temporary database,
+sessions and a local PHP server, then clean them up; they do not use your development data.
+They cover Tech navigation, article and user CRUD, login/logout, access restrictions,
+duplicate emails, invalid IDs, password changes, CSRF, HTML escaping and database persistence.
+The automated integration suite uses SQLite. MySQL is an optional configuration and is not
+covered by this suite.
+
+Manual check: sign in, open **Manage users**, create a user, view it, edit its name with an
+empty password, then delete it. Open **Technology** from the public menu and check its two posts.
+
+For a Russian explanation of the request flow, see [docs/how-it-works.md](docs/how-it-works.md).
