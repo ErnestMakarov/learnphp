@@ -1,95 +1,136 @@
 # LearnPHP
 
-A classroom PHP journal. The project follows the controller/model/view approach from
-[Kaspar Martin Suursalu's course example](https://github.com/Kasparsu/ta24blearnphp)
-(reference commit `43ffc842591bc93212971c5103b7d33ab86c2a5f`).
-The router, database access, forms and controllers are adapted for this repository.
-Bootstrap CSS is distributed with its original MIT notice.
+PHP classroom blog by Ernest Makarov. Based on the controller/model/view approach in
+[Kaspar Martin Suursalu's course](https://github.com/Kasparsu/ta24blearnphp).
+The two assessed tasks are the **Technology page (02.10)** and **users CRUD (11.11)**.
+See [the assignment checklist](docs/assignment-checklist.md) for exact file mappings.
 
-## Run locally
+## Requirements
 
-Requirements: PHP 8.2 or newer with PDO and `pdo_sqlite`. No Composer packages are required.
+- PHP **8.2+** with PDO and `pdo_sqlite` (or `pdo_mysql` for MariaDB).
+- Composer 2, Git. No Node.js or Python is required.
+- Docker Desktop only for the optional MariaDB setup below.
 
-```sh
+Check PHP with `php -v`, extensions with `php -m`, and Composer with `composer --version`.
+On macOS with Homebrew: `brew install php composer`.
+On Windows, enable `pdo_sqlite` in the PHP configuration shown by `php --ini`.
+
+## Clone and run (SQLite)
+
+```bash
+git clone https://github.com/ErnestMakarov/learnphp.git
+cd learnphp
+composer install
 php bin/setup.php
-php -S localhost:9999 -t public public/index.php
+bash server.sh
 ```
 
-Open http://localhost:9999. The setup script prints the initial administrator's email and
-a randomly generated password. Save them locally, then sign in at `/login`.
-Running setup again keeps the existing administrator and password.
-The SQLite file is stored in `storage/` and excluded from Git.
+If the project is already cloned, run the last three commands in its root folder.
+Open **http://localhost:9999**. Setup prints the administrator email and a random password;
+save them locally and sign in at `/login`. Running setup again keeps existing accounts,
+passwords and articles. The database is `storage/learnphp.sqlite`, excluded from Git.
+If the administrator password was lost, run `php bin/reset-password.php admin@example.test`.
 
-Always use `-t public`: only that directory should be served by the web server.
-The PHP development server is intended for local coursework, not production hosting.
+Registering at `/register` creates an ordinary user and logs them in. Only administrators
+can manage articles/users. The account role cannot be changed through a web form.
 
-## MariaDB / MySQL (optional)
+Equivalent start command: `php -S localhost:9999 -t public public/index.php`.
+Only `public/` is served. This development server is for local coursework.
+Press Ctrl+C to stop it.
 
-Create an empty `learnphp` database and enable `pdo_mysql`, then export the connection
-settings before both setup and server startup:
+## MariaDB with Docker (classroom option)
 
-```sh
-export DB_DSN='mysql:host=127.0.0.1;port=3306;dbname=learnphp;charset=utf8mb4'
-export DB_USER='your_database_user'
-export DB_PASSWORD='your_database_password'
+From the project root, with Docker Desktop running:
+
+```bash
+docker compose up -d --wait
+export DB_DSN='mysql:host=127.0.0.1;port=33061;dbname=learnphp;charset=utf8mb4'
+export DB_USER='learnphp'
+export DB_PASSWORD='local-coursework'
+composer install
 php bin/setup.php
-php -S localhost:9999 -t public public/index.php
+bash server.sh --mysql
 ```
 
-`tables.sql` contains the MySQL schema; SQLite uses `database/schema.sqlite.sql`.
-Environment variables are read from the shell; `.env` files are not loaded automatically.
+The Compose file pins the MariaDB 11.4 series, binds the database to localhost only and
+keeps data in a named volume. The listed passwords are **local development defaults**.
+DataGrip: host `127.0.0.1`, port `33061`, database/user `learnphp`, password `local-coursework`.
+`docker compose down` stops the database while preserving the volume; do not add `-v`
+unless you intend to delete that database.
 
-## Structure
+`tables.sql` is the MariaDB/MySQL schema. SQLite uses `database/schema.sqlite.sql`.
+Setup creates missing tables, but does not migrate an older, differently structured database.
+The existing `articles` and `users` data from this project remain compatible.
+Environment variables come from the shell; `.env` files are **not** automatically loaded.
+To return to SQLite in the same terminal: `unset DB_DSN DB_USER DB_PASSWORD`.
+Use the same database environment for password resets and setup as for the server.
 
-- `public/index.php`: session setup and request entry point.
-- `routes.php`: GET and POST routes.
-- `src/Controllers/`: request handling and validation.
-- `src/Models/`: user and article records.
-- `src/DB.php`: PDO queries with bound parameters.
-- `views/`: templates with shared partials and escaped output.
-- `exercises/` and `docs/lesson-notes.md`: preserved early lesson work.
+## Project structure
 
-Admin pages require an administrator session. Every POST form uses a CSRF token.
-Passwords are stored using `password_hash` and checked using `password_verify`.
-
-## Completed assignments
-
-| Requirement | Implementation |
+| Location | Purpose |
 | --- | --- |
-| Technology page and original posts | `PublicController::tech()`, `views/tech.php`, `/tech` |
-| Shared page layout | Header, posts, sidebar and footer partials |
-| Technology menu link | `views/partials/nav.php` |
-| User list and detail view | `/admin/users`, `/admin/users/view?id=...` |
-| Create a user | GET `/admin/users/create`, POST `/admin/users` |
-| Edit a user | GET and POST `/admin/users/edit` |
-| Delete a user | POST `/admin/users/delete` with confirmation and CSRF protection |
-| Admin menu | Manage articles and Manage users links |
-| Separate commits | Foundation, Tech, user list/details, creation, editing, deletion, verification |
+| `public/index.php` | Request entry point, session setup and dispatch |
+| `bootstrap.php`, `composer.json` | Composer PSR-4 autoloading: `App\\` → `src/` |
+| `src/Route.php`, `src/Router.php`, `routes.php` | Route objects, path/method matching and route list |
+| `src/Controllers/` | Public pages, authentication, article and user actions |
+| `src/Models/`, `src/DB.php` | Abstract model, record objects, PDO prepared queries |
+| `src/Validation/UserInput.php` | Shared registration/admin user validation |
+| `views/` | Bootstrap templates, shared partials, escaped output |
+| `bin/` | Database setup and local password recovery |
+| `exercises/basics.php` | Standalone examples of the early PHP lessons |
+| `tests/smoke.php` | HTTP integration checks using PHP only |
 
-The assignment's article URLs are `/admin/articles`; the teacher's current example uses
-`/admin/posts`. This project uses the assignment's naming and keeps a working article CRUD.
-New accounts created through the users form are ordinary users. Only the administrator
-created by setup can manage records. The form does not grant administrator rights.
-An administrator cannot delete their own account. An empty password on edit keeps the old
-hash; a new password must match its confirmation. Passwords and hashes are never rendered.
-Bcrypt passwords are limited to 72 bytes to avoid silent truncation.
+`composer.lock` records exact dependencies. `composer install` recreates `vendor/`;
+`vendor/` is not committed. `symfony/var-dumper` provides `dump()` and `dd()`.
+Its 7.4 series supports PHP 8.2; the teacher's newer 8.x dependency needs a newer PHP runtime.
+The project classes use PSR-4 naming and conventional PSR-12 layout; no full style audit is claimed.
+
+## Pages and behavior
+
+- `/`, `/us`: articles from the database. The home page also has hero/featured partials.
+- `/tech`: two original technology posts, its own controller method and shared layout.
+- `/forms`: GET shows a form, POST processes a name and age with validation.
+- `/register`, `/login`, POST `/logout`: registration, login and logout using server sessions.
+- `/admin/users`: list, view, create, edit and delete users; dates are shown, passwords/hashes are not.
+- `/admin/articles`: article CRUD. `/admin/posts` and its action URLs are equivalent aliases
+  matching the classroom naming. Existing `/admin/articles` links remain supported.
+
+Both CRUDs use GET to view forms and POST to change data. POST forms check CSRF tokens.
+A blank password during editing preserves the existing hash; a supplied password is validated
+and hashed with bcrypt. An administrator cannot delete the account they are using.
+Names and content are HTML-escaped. Duplicate email is rejected by validation and a database
+unique constraint. Non-admin users receive HTTP 403 when opening admin pages.
+Article content may be empty; the title is required.
 
 ## Verification
 
-Run the HTTP integration checks with PHP and Python 3 installed:
-
-```sh
-python3 tests/smoke.py
+```bash
+composer validate --strict
+php tests/smoke.php
+php exercises/basics.php
 ```
 
-Optionally set `PHP_BIN` to a different PHP executable. Tests create a temporary database,
-sessions and a local PHP server, then clean them up; they do not use your development data.
-They cover Tech navigation, article and user CRUD, login/logout, access restrictions,
-duplicate emails, invalid IDs, password changes, CSRF, HTML escaping and database persistence.
-The automated integration suite uses SQLite. MySQL is an optional configuration and is not
-covered by this suite.
+The test runner needs `pdo_sqlite`, enabled `proc_open` and HTTP streams (`allow_url_fopen`).
+It starts a local PHP server with a temporary database/session directory, tests the real HTTP
+routes and removes the temporary files. It does not touch development data. Optional `PHP_BIN`
+selects a different PHP executable. Tests cover Tech navigation, user/article CRUD, registration,
+login/logout, permissions, password changes, duplicates, invalid IDs, CSRF and HTML escaping.
+The automated database suite targets SQLite. The Docker/MariaDB runtime must be checked
+on a computer with Docker; it was not available in the verification environment.
 
-Manual check: sign in, open **Manage users**, create a user, view it, edit its name with an
-empty password, then delete it. Open **Technology** from the public menu and check its two posts.
+Manual demonstration: sign in as admin → Manage users → New user → View → Edit (leave password
+blank) → Edit with a new password → Delete. Show Technology using the public menu, then test
+registration in a private browser window. Detailed Russian explanations are in
+[docs/how-it-works.md](docs/how-it-works.md).
 
-For a Russian explanation of the request flow, see [docs/how-it-works.md](docs/how-it-works.md).
+## Scope and credits
+
+This is the plain-PHP `learnphp` project through the Composer lesson, not the separate Laravel
+blog started on 18 November. The first-period X is a grading status, not an extra programming
+feature. Submit the GitHub link in Teams for both assessed tasks; only the teacher can update
+Tahvel after checking the work.
+
+Course examples: [ta24blearnphp](https://github.com/Kasparsu/ta24blearnphp) and
+[lesson notes](https://github.com/Kasparsu/TA24B/tree/main/backend).
+Bundled Bootstrap CSS/JS retain their MIT notices. Composer dependencies retain their licenses.
+The application is adapted coursework, not a verbatim copy of every classroom experiment.
