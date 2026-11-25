@@ -2,6 +2,7 @@
 <main class="container" id="top">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div><p class="text-secondary small mb-1">Administration</p><h1>Users</h1></div>
+        <a class="btn btn-dark" href="/admin/users/create">New user</a>
     </div>
     <div class="table-responsive">
         <table class="table align-middle">

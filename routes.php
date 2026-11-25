@@ -24,3 +24,5 @@ Router::post('/admin/articles/delete', [ArticlesController::class, 'delete']);
 
 Router::get('/admin/users', [UsersController::class, 'index']);
 Router::get('/admin/users/view', [UsersController::class, 'view']);
+Router::get('/admin/users/create', [UsersController::class, 'create']);
+Router::post('/admin/users', [UsersController::class, 'store']);
