@@ -9,5 +9,6 @@
         <dt class="col-sm-3">Created</dt><dd class="col-sm-9"><?= e($user->created_at) ?></dd>
         <dt class="col-sm-3">Updated</dt><dd class="col-sm-9"><?= e($user->updated_at) ?></dd>
     </dl>
+    <a class="btn btn-dark" href="/admin/users/edit?id=<?= e($user->id) ?>">Edit user</a>
 </main>
 <?php include __DIR__ . '/../partials/footer.php'; ?>

@@ -37,6 +37,16 @@ class UsersController
         $this->save(new User(), 'users/create');
     }
 
+    public function edit(): void
+    {
+        view('users/edit', ['title' => 'Edit user', 'user' => $this->findUser(), 'errors' => []]);
+    }
+
+    public function update(): void
+    {
+        $this->save($this->findUser(), 'users/edit');
+    }
+
     private function save(User $user, string $form): void
     {
         $user->name = trim(input('name'));

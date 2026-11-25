@@ -15,7 +15,10 @@
                         <td><?= e($user->name) ?></td>
                         <td><?= e($user->email) ?></td>
                         <td><?= $user->is_admin ? 'Administrator' : 'User' ?></td>
-                        <td><a class="btn btn-sm btn-outline-secondary" href="/admin/users/view?id=<?= e($user->id) ?>">View</a></td>
+                        <td><div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-sm btn-outline-secondary" href="/admin/users/view?id=<?= e($user->id) ?>">View</a>
+                            <a class="btn btn-sm btn-outline-primary" href="/admin/users/edit?id=<?= e($user->id) ?>">Edit</a>
+                        </div></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
