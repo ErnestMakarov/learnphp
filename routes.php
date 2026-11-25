@@ -28,3 +28,4 @@ Router::get('/admin/users/create', [UsersController::class, 'create']);
 Router::post('/admin/users', [UsersController::class, 'store']);
 Router::get('/admin/users/edit', [UsersController::class, 'edit']);
 Router::post('/admin/users/edit', [UsersController::class, 'update']);
+Router::post('/admin/users/delete', [UsersController::class, 'delete']);

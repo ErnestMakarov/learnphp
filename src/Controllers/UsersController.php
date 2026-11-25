@@ -47,6 +47,17 @@ class UsersController
         $this->save($this->findUser(), 'users/edit');
     }
 
+    public function delete(): void
+    {
+        $user = $this->findUser();
+        if ($user->id === (int) $_SESSION['userID']) {
+            abort(422, 'You cannot delete the account you are currently using.');
+        }
+        $user->delete();
+        flash('User deleted.');
+        redirect('/admin/users');
+    }
+
     private function save(User $user, string $form): void
     {
         $user->name = trim(input('name'));

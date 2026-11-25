@@ -18,6 +18,14 @@
                         <td><div class="d-flex flex-wrap gap-2">
                             <a class="btn btn-sm btn-outline-secondary" href="/admin/users/view?id=<?= e($user->id) ?>">View</a>
                             <a class="btn btn-sm btn-outline-primary" href="/admin/users/edit?id=<?= e($user->id) ?>">Edit</a>
+                            <?php if ($user->id !== $currentUser->id): ?>
+                                <form method="post" action="/admin/users/delete" onsubmit="return confirm('Delete this user permanently?');">
+                                    <?= csrfField() ?><input type="hidden" name="id" value="<?= e($user->id) ?>">
+                                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            <?php else: ?>
+                                <span class="text-secondary small align-self-center">Your account</span>
+                            <?php endif; ?>
                         </div></td>
                     </tr>
                 <?php endforeach; ?>
