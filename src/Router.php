@@ -4,35 +4,40 @@ namespace App;
 
 class Router
 {
+    /** @var Route[] */
     private static array $routes = [];
 
-    public static function get(string $path, array $action): void
+    public static function addRoute(string $method, string $path, callable|array $action): void
     {
-        self::$routes['GET'][$path] = $action;
-    }
-
-    public static function post(string $path, array $action): void
-    {
-        self::$routes['POST'][$path] = $action;
+        self::$routes[] = new Route($method, $path, $action);
     }
 
     public static function dispatch(string $uri, string $method): void
     {
         $path = parse_url($uri, PHP_URL_PATH) ?: '/';
-        $action = self::$routes[$method][$path] ?? null;
-        if ($action === null) {
-            $allowed = array_keys(array_filter(self::$routes, fn (array $routes) => isset($routes[$path])));
-            if ($allowed !== []) {
-                header('Allow: ' . implode(', ', $allowed));
-                abort(405, 'This HTTP method is not allowed.');
+        $allowed = [];
+        foreach (self::$routes as $route) {
+            if ($route->getPath() !== $path) {
+                continue;
             }
-            abort(404, 'Page not found.');
+            $allowed[] = $route->getMethod();
+            if ($route->getMethod() !== $method) {
+                continue;
+            }
+            if ($method === 'POST') {
+                verifyCsrf();
+            }
+            $action = $route->getAction();
+            if (is_array($action) && is_string($action[0])) {
+                $action = [new $action[0](), $action[1]];
+            }
+            call_user_func($action);
+            return;
         }
-
-        if ($method === 'POST') {
-            verifyCsrf();
+        if ($allowed !== []) {
+            header('Allow: ' . implode(', ', array_unique($allowed)));
+            abort(405, 'This HTTP method is not allowed.');
         }
-        [$class, $actionName] = $action;
-        (new $class())->$actionName();
+        abort(404, 'Page not found.');
     }
 }

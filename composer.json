@@ -1,0 +1,27 @@
+{
+    "name": "ernestmakarov/learnphp",
+    "description": "PHP classroom blog with Technology page and user CRUD",
+    "type": "project",
+    "require": {
+        "php": ">=8.2",
+        "ext-pdo": "*",
+        "symfony/var-dumper": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "scripts": {
+        "setup": "@php bin/setup.php",
+        "start": "@php -S localhost:9999 -t public public/index.php",
+        "test": "@php tests/smoke.php"
+    },
+    "config": {
+        "platform": {
+            "php": "8.2.0"
+        },
+        "sort-packages": true
+    },
+    "license": "proprietary"
+}

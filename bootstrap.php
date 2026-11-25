@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-spl_autoload_register(function (string $class): void {
-    if (str_starts_with($class, 'App\\')) {
-        $path = __DIR__ . '/src/' . str_replace('\\', '/', substr($class, 4)) . '.php';
-        if (is_file($path)) {
-            require $path;
-        }
+$autoload = __DIR__ . '/vendor/autoload.php';
+if (!is_file($autoload)) {
+    if (PHP_SAPI !== 'cli') {
+        http_response_code(503);
     }
-});
-
+    exit("Dependencies are missing. Run composer install in the project folder.\n");
+}
+require $autoload;
 require __DIR__ . '/helpers.php';
