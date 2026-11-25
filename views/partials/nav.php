@@ -15,11 +15,10 @@
         </div>
     </div>
     <nav class="nav gap-3 pt-3" aria-label="Main navigation">
-        <?php foreach (['/' => 'World', '/us' => 'U.S.'] as $url => $label): ?>
+        <?php foreach (['/' => 'World', '/us' => 'U.S.', '/tech' => 'Technology'] as $url => $label): ?>
             <a class="nav-link px-0 <?= $currentPath === $url ? 'fw-bold text-dark' : 'text-secondary' ?>"
                href="<?= e($url) ?>" <?= $currentPath === $url ? 'aria-current="page"' : '' ?>><?= e($label) ?></a>
         <?php endforeach; ?>
-        <a class="nav-link px-0 text-secondary" href="#">Technology</a>
         <?php if ($currentUser?->is_admin): ?>
             <a class="nav-link px-0" href="/admin/articles">Manage articles</a>
         <?php endif; ?>
